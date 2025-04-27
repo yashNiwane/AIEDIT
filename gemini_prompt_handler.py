@@ -1,6 +1,6 @@
 import google.generativeai as genai
 
-genai.configure(api_key="YOUR_GEMINI_API_KEY")
+genai.configure(api_key="AIzaSyDh3EPsNyndUdUqKMq0gencXLdwpL1j0lk")
 
 def parse_prompt(prompt_text):
     model = genai.GenerativeModel(model_name="gemini-1.5-flash-latest")

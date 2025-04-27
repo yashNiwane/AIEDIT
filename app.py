@@ -15,10 +15,29 @@ if st.button("Edit Video") and uploaded_video is not None and prompt:
         temp_input.write(uploaded_video.read())
         input_video_path = temp_input.name
 
-    # Parse prompt
-    parsed_data = json.loads(parse_prompt(prompt))
+    # 1️⃣ Get AI Response
+    response_text = parse_prompt(prompt)
+    print("Gemini API Raw Response:", response_text)
 
-    # Start editing
+    # 2️⃣ Clean the response
+    clean_text = response_text.strip()
+    if clean_text.startswith("```json"):
+        clean_text = clean_text[6:].strip()
+    if clean_text.startswith("```"):
+        clean_text = clean_text[3:].strip()
+    if clean_text.endswith("```"):
+        clean_text = clean_text[:-3].strip()
+
+    # 3️⃣ Parse clean JSON
+    try:
+        parsed_data = json.loads(clean_text)
+    except json.JSONDecodeError as e:
+        st.error(f"Failed to parse response. Error: {e}")
+        st.stop()
+
+    print("Parsed Data:", parsed_data)
+
+    # 4️⃣ Start Editing
     clip = cut_video(input_video_path, parsed_data["cut_start"], parsed_data["cut_end"])
 
     if parsed_data.get("text"):
@@ -30,9 +49,10 @@ if st.button("Edit Video") and uploaded_video is not None and prompt:
             music_path = temp_audio.name
             clip = add_background_music(clip, music_path)
 
-    # Export final video
+    # 5️⃣ Export final video
     with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as temp_output:
         export_video(clip, temp_output.name, parsed_data.get("export_quality", "720p"))
+        
+        st.success("🎉 Video edited successfully!")
         st.video(temp_output.name)
         st.download_button("Download Edited Video", temp_output.name, file_name="edited_video.mp4")
-
