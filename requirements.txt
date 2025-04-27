@@ -1,0 +1,4 @@
+streamlit
+moviepy
+google-generativeai
+ffmpeg-python
