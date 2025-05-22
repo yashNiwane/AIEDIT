@@ -40,11 +40,11 @@ class EditorController:
         self.preview_service.ui_time_update_callback = self._on_preview_time_update
         self.preview_service.ui_playback_stopped_callback = self._on_preview_stopped
 
-        # Initial UI state
-        self.view.set_status("Welcome! Load a video to start.", "info")
-        if not self.ai_service.is_configured:
-            self.view.set_status("Warning: GOOGLE_API_KEY not found or invalid. AI features disabled.", "warning")
-        self._update_all_button_states()
+        # Initial UI state setup is deferred to main.py, after the view is fully assigned.
+        # self.view.set_status("Welcome! Load a video to start.", "info")
+        # if not self.ai_service.is_configured:
+        #     self.view.set_status("Warning: GOOGLE_API_KEY not found or invalid. AI features disabled.", "warning")
+        # self._update_all_button_states() # This will be called from main.py after view is set
 
 
     # --- Event Handler Methods (called by MainView) ---
