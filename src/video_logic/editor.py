@@ -35,9 +35,9 @@ class VideoEditorLogic:
             current_clip = VideoFileClip(current_video_path_param)
             temp_clips_to_close.append(current_clip)
         except Exception as e:
-            error_msg = f"Error: Could not load video for edit. (Details: {e})"
+            error_msg = f"Error: Could not load video for edit. (Details: {str(e)})"
             status_update_func(error_msg, ui_colors['ERROR_FG_COLOR'])
-            return {'new_video_path': None, 'updated_edit_count': current_edit_count, 'status_text': error_msg, 'status_fg': ui_colors['ERROR_FG_COLOR']}
+            return {'new_video_path': None, 'updated_edit_count': current_edit_count, 'status_text': f"Error: Could not load video for edit. (Details: {str(e)})", 'status_fg': ui_colors['ERROR_FG_COLOR']}
 
         action = edit_params.get("action")
         status_update_func(f"Applying '{action}'...", ui_colors['FG_COLOR_LIGHT'])
@@ -282,11 +282,11 @@ class VideoEditorLogic:
                 return {'new_video_path': None, 'updated_edit_count': current_edit_count, 'status_text': error_msg, 'status_fg': ui_colors['ERROR_FG_COLOR']}
         
         except ValueError as ve:
-            error_msg = f"Parameter Error for '{action}': {ve}"
+            error_msg = f"Parameter Error for '{action}': {str(ve)}"
             status_update_func(error_msg, ui_colors['ERROR_FG_COLOR'])
-            return {'new_video_path': None, 'updated_edit_count': current_edit_count, 'status_text': error_msg, 'status_fg': ui_colors['ERROR_FG_COLOR']}
+            return {'new_video_path': None, 'updated_edit_count': current_edit_count, 'status_text': f"Parameter Error for '{action}': {str(ve)}", 'status_fg': ui_colors['ERROR_FG_COLOR']}
         except Exception as e_moviepy:
-            error_msg = f"MoviePy Error ('{action}'): {str(e_moviepy)[:150]}"
+            error_msg = f"MoviePy Error ('{action}'): {str(e_moviepy)[:150]}" # Already uses str() here, but good to be consistent if it didn't
             status_update_func(error_msg, ui_colors['ERROR_FG_COLOR'])
             print(f"Full MoviePy Error for {action}: {e_moviepy}") # Keep detailed log for debugging
             return {'new_video_path': None, 'updated_edit_count': current_edit_count, 'status_text': error_msg, 'status_fg': ui_colors['ERROR_FG_COLOR']}
@@ -322,7 +322,7 @@ class VideoEditorLogic:
                 return {'new_video_path': new_filename_for_edit, 'updated_edit_count': current_edit_count, 'status_text': status_text, 'status_fg': ui_colors['SUCCESS_FG_COLOR']}
 
             except Exception as e_save:
-                error_msg = f"Error saving video: {str(e_save)[:100]}."
+                error_msg = f"Error saving video: {str(e_save)[:100]}" # Already uses str() here
                 status_update_func(error_msg, ui_colors['ERROR_FG_COLOR'])
                 print(f"Full Save Error: {e_save}") # Keep detailed log
                 # Clean up temp_clips even if save fails
@@ -331,7 +331,7 @@ class VideoEditorLogic:
                         try: clip_obj.close()
                         except Exception as e_close: print(f"Minor error closing temp clip (save error): {e_close}")
                 if edited_clip: edited_clip.close()
-                return {'new_video_path': None, 'updated_edit_count': edit_count_param, 'status_text': error_msg, 'status_fg': ui_colors['ERROR_FG_COLOR']} # Return original edit count
+                return {'new_video_path': None, 'updated_edit_count': edit_count_param, 'status_text': f"Error saving video: {str(e_save)[:100]}", 'status_fg': ui_colors['ERROR_FG_COLOR']} # Ensure str(e) is used here too
         else: # No edited_clip was created (e.g., error before processing or action didn't produce one)
             status_text = f"Edit action '{action}' did not result in a new video clip."
             status_update_func(status_text, ui_colors['WARNING_FG_COLOR'])
