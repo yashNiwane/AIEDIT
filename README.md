@@ -98,4 +98,32 @@ This Python application provides a simple GUI for basic and some advanced video 
 
 Execute the Python script:
 ```bash
-python video_editor_app.py
+python main.py
+# Or, if you typically use python3:
+# python3 main.py
+```
+
+## Code Structure (Refactored)
+
+The application has been refactored into an MVC-like architecture to improve organization and maintainability:
+
+*   **`main.py`**: The main entry point of the application.
+*   **`src/`**: Contains all source code.
+    *   **`config.py`**: UI styling constants.
+    *   **`utils.py`**: Utility functions (e.g., time formatting).
+    *   **`models/`**: Contains data models.
+        *   `video_state.py`: Manages the state of the video being edited, including undo/redo history.
+    *   **`views/`**: Contains the UI logic.
+        *   `main_view.py`: Manages the Tkinter GUI, displays information, and forwards user actions.
+    *   **`controllers/`**: Contains the application logic and coordination.
+        *   `editor_controller.py`: Connects the view with models and services, orchestrating operations.
+    *   **`services/`**: Contains specific business logic.
+        *   `ai_service.py`: Handles interaction with the Google Gemini API.
+        *   `video_processing_service.py`: Encapsulates MoviePy-based video editing operations.
+        *   `preview_service.py`: Manages video preview generation and playback using OpenCV.
+
+This separation of concerns makes the codebase easier to understand, test, and extend.
+
+## Original README Content (Features, Setup - Verified)
+
+(The following sections on Features and Setup have been verified to be accurate for the refactored application)
